@@ -116,7 +116,6 @@ object Constants {
     inputTypes["textCapWords"] = InputType.TYPE_TEXT_FLAG_CAP_WORDS
     inputTypes["textEmailAddress"] = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
     inputTypes["textEmailSubject"] = InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     inputTypes["textEnableTextConversionSuggestions"] =
       InputType.TYPE_TEXT_FLAG_ENABLE_TEXT_CONVERSION_SUGGESTIONS
     inputTypes["textFilter"] =
