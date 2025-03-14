@@ -511,7 +511,6 @@ class EditorActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-//    binding = null
         projectManager.closeProject()
     }
 
@@ -520,12 +519,7 @@ class EditorActivity : BaseActivity() {
         if (result.isEmpty()) {
             showNothingDialog()
         } else {
-            startActivity(
-                Intent(this, ShowXMLActivity::class.java).putExtra(
-                    ShowXMLActivity.EXTRA_KEY_XML,
-                    result
-                )
-            )
+            finish()
         }
     }
 
@@ -848,3 +842,4 @@ class EditorActivity : BaseActivity() {
         const val ACTION_OPEN: String = "com.itsvks.layouteditor.open"
     }
 }
+
