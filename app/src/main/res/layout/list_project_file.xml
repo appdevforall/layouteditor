@@ -5,14 +5,12 @@
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:layout_margin="4dp"
-  app:cardBackgroundColor="?attr/colorSurfaceContainer"
   app:cardCornerRadius="12dp"
   app:cardElevation="0dp">
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
     android:padding="15dp">
 
     <TextView
@@ -57,13 +55,12 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginLeft="15dp"
-      android:text="Date"
+      android:text="@string/date"
       android:textColor="?colorTertiary"
       android:textSize="13sp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintLeft_toRightOf="@id/icon"
-      app:layout_constraintTop_toBottomOf="@id/project_name"
-      tools:ignore="HardcodedText" />
+      app:layout_constraintTop_toBottomOf="@id/project_name" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
