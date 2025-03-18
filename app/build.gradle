@@ -16,6 +16,14 @@ android {
         versionName project.versionName
     }
 
+    publishing {
+        singleVariant("debug") {
+            // Optionally include sources or Javadoc if needed
+//            withSourcesJar()
+//            withJavadocJar()
+        }
+    }
+
     signingConfigs {
         release {
             storeFile file("../key-layout-editor.keystore")
