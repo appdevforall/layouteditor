@@ -60,6 +60,20 @@ android {
         exclude "license/LICENSE.dom-software.txt"
         exclude "license/LICENSE"
     }
+
+    publishing {
+        // This makes sure the debug variant is published with its attributes
+        singleVariant("debug") {
+            // Optionally, you can add sources or javadoc if needed
+            // withSourcesJar()
+            // withJavadocJar()
+        }
+        // Similarly for release – you can include additional artifacts if desired
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
