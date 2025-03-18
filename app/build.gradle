@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-//    id 'com.google.android.gms.oss-licenses-plugin'
+    // id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
@@ -16,11 +16,12 @@ android {
         versionName project.versionName
     }
 
+    // Publish only the debug variant to consumers
     publishing {
         singleVariant("debug") {
-            // Optionally include sources or Javadoc if needed
-//            withSourcesJar()
-//            withJavadocJar()
+            withVariantsMatching { variant ->
+                variant.buildType == "debug"
+            }
         }
     }
 
@@ -106,6 +107,6 @@ dependencies {
     implementation(projects.layouteditor.vectormaster)
     implementation(projects.common)
 
-    //causes strict mode violation
+    // causes strict mode violation
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
 }
