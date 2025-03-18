@@ -60,6 +60,17 @@ android {
         exclude "license/LICENSE.dom-software.txt"
         exclude "license/LICENSE"
     }
+
+    publishing {
+        singleVariant("debug") {
+            // withSourcesJar()
+            // withJavadocJar()
+        }
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
