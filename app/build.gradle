@@ -63,6 +63,7 @@ android {
 
     publishing {
         singleVariant("debug") {
+            // optional for debug
             // withSourcesJar()
             // withJavadocJar()
         }
