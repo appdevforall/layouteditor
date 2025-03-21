@@ -316,31 +316,51 @@ class EditorActivity : BaseActivity() {
         binding.listView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         val adapter = PaletteListAdapter(binding.drawer)
-        adapter.submitPaletteList(projectManager.getPalette(0))
+        try {
+            adapter.submitPaletteList(projectManager.getPalette(0))
 
-        binding.paletteNavigation.setOnItemSelectedListener { item: MenuItem ->
-            adapter.submitPaletteList(projectManager.getPalette(item.itemId))
-            binding.paletteText.text = "Palette"
-            binding.title.text = item.title
-            replaceListViewAdapter(adapter)
-            if (fab != null) {
-                fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.folder_outline))
-                TooltipCompat.setTooltipText(fab, "Layouts")
+            binding.paletteNavigation.setOnItemSelectedListener { item: MenuItem ->
+                try {
+                    adapter.submitPaletteList(projectManager.getPalette(item.itemId))
+                    binding.paletteText.text = "Palette"
+                    binding.title.text = item.title
+                    replaceListViewAdapter(adapter)
+                    if (fab != null) {
+                        fab.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                this,
+                                R.drawable.folder_outline
+                            )
+                        )
+                        TooltipCompat.setTooltipText(fab, "Layouts")
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Failed to load palette: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                true
             }
-            true
+            replaceListViewAdapter(adapter)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to initialize palette: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
-        replaceListViewAdapter(adapter)
 
         fab?.setOnClickListener {
             if (binding.listView.adapter is LayoutListAdapter) {
                 createLayout()
             } else {
-                replaceListViewAdapter(layoutAdapter)
-                binding.title.text = getString(string.layouts)
-                binding.paletteText.text = project.name
-                // binding.paletteNavigation.getMenu().getItem(binding.paletteNavigation.getSelectedItemId()).setChecked(false);
-                fab.setImageResource(R.drawable.plus)
-                TooltipCompat.setTooltipText(fab, "Create new layout")
+                try {
+                    replaceListViewAdapter(layoutAdapter)
+                    binding.title.text = getString(string.layouts)
+                    binding.paletteText.text = project.name
+                    // binding.paletteNavigation.getMenu().getItem(binding.paletteNavigation.getSelectedItemId()).setChecked(false);
+                    fab.setImageResource(R.drawable.plus)
+                    TooltipCompat.setTooltipText(fab, "Create new layout")
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Failed to load layouts: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
         clear()
@@ -626,6 +646,13 @@ class EditorActivity : BaseActivity() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
+
+        // Force redraw layout to ensure constraints are applied
+        binding.editorLayout.post {
+            binding.editorLayout.requestLayout()
+            binding.editorLayout.invalidate()
+        }
+
         make(binding.root, "Loaded!")
             .setFadeAnimation()
             .setType(SBUtils.Type.INFO)

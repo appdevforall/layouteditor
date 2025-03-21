@@ -375,11 +375,34 @@ class DesignEditor : LinearLayout {
       view.minimumHeight = Utils.pxToDp(context, 20)
     }
 
+    ensureConstraintsApplied()
+
     updateStructure()
     toggleStrokeWidgets()
 
     initializer =
       AttributeInitializer(context, viewAttributeMap, attributes, parentAttributes)
+  }
+
+  private fun ensureConstraintsApplied() {
+    if (childCount > 0) {
+      val rootView = getChildAt(0)
+
+      // For ConstraintLayout or any ViewGroup that might contain a ConstraintLayout
+      if (rootView is ViewGroup) {
+        // Set full size for root view
+        rootView.layoutParams = LayoutParams(
+          LayoutParams.MATCH_PARENT,
+          LayoutParams.MATCH_PARENT
+        )
+
+        // Force correct constraints by requesting layout and waiting for next layout pass
+        rootView.post {
+          rootView.requestLayout()
+          invalidate()
+        }
+      }
+    }
   }
 
   fun undo() {

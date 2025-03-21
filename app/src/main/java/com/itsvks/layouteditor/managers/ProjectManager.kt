@@ -18,9 +18,13 @@ class ProjectManager private constructor() {
     var openedProject: ProjectFile? = null
         private set
 
+    // Flag to check if palette is initialized
+    private var isPaletteInitialized = false
+
     fun initManger(context: Context) {
         this.context = context
-        CompletableFuture.runAsync { initPalette(context) }
+        // Initialize palette synchronously to prevent crashes
+        initPalette(context)
     }
 
     fun openProject(project: ProjectFile?) {
@@ -55,6 +59,10 @@ class ProjectManager private constructor() {
         }
 
     fun getPalette(position: Int): List<HashMap<String, Any>> {
+        // Return empty list if palette is not initialized or position is out of bounds
+        if (!isPaletteInitialized || position < 0 || position >= paletteList.size) {
+            return emptyList()
+        }
         return paletteList[position]
     }
 
@@ -70,6 +78,9 @@ class ProjectManager private constructor() {
         paletteList.add(convertJsonToJavaObject(gson, type, Constants.PALETTE_CONTAINERS, context))
         //paletteList.add(convertJsonToJavaObject(gson, type, Constants.PALETTE_GOOGLE, context))
         paletteList.add(convertJsonToJavaObject(gson, type, Constants.PALETTE_LEGACY, context))
+
+        // Mark palette as initialized
+        isPaletteInitialized = true
     }
 
     private fun convertJsonToJavaObject(

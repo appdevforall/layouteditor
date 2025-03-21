@@ -158,13 +158,56 @@ class XmlLayoutParser(context: Context) {
 
     val keys = attributeMap.keySet()
 
-    for (i in keys.indices.reversed()) {
-      val key = keys[i]
+    // First apply ID (needed for constraints)
+    if (attributeMap.contains("android:id")) {
+      val attr = initializer.getAttributeFromKey("android:id", allAttrs) ?: return
+      invokeMethod(
+        attr[Constants.KEY_METHOD_NAME].toString(),
+        attr[Constants.KEY_CLASS_NAME].toString(),
+        target,
+        attributeMap.getValue("android:id"),
+        target.context
+      )
+    }
 
-      if (key == "android:id") {
-        continue
-      }
+    // Then apply layout params (width, height)
+    val layoutKeys = keys.filter {
+      it == "android:layout_width" || it == "android:layout_height"
+    }
+    for (key in layoutKeys) {
+      val attr = initializer.getAttributeFromKey(key, allAttrs) ?: continue
+      invokeMethod(
+        attr[Constants.KEY_METHOD_NAME].toString(),
+        attr[Constants.KEY_CLASS_NAME].toString(),
+        target,
+        attributeMap.getValue(key),
+        target.context
+      )
+    }
 
+    // Then apply constraints
+    val constraintKeys = keys.filter {
+      it.startsWith("app:layout_constraint")
+    }
+    for (key in constraintKeys) {
+      val attr = initializer.getAttributeFromKey(key, allAttrs) ?: continue
+      invokeMethod(
+        attr[Constants.KEY_METHOD_NAME].toString(),
+        attr[Constants.KEY_CLASS_NAME].toString(),
+        target,
+        attributeMap.getValue(key),
+        target.context
+      )
+    }
+
+    // Finally apply all other attributes
+    val remainingKeys = keys.filter {
+      it != "android:id" &&
+              it != "android:layout_width" &&
+              it != "android:layout_height" &&
+              !it.startsWith("app:layout_constraint")
+    }
+    for (key in remainingKeys) {
       val attr = initializer.getAttributeFromKey(key, allAttrs)
       if (attr == null) {
         Log.w("XmlParser", "Could not find attribute $key for view ${target.javaClass.simpleName}")
