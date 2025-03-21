@@ -28,7 +28,15 @@ class ConvertImportedXml(private val xml: String?) {
           val classes =
             JSONObject(FileUtil.readFromAsset("widgetclasses.json", context))
 
-          val widgetClass = widgetName?.let { classes.getString(it) }
+          val widgetClass = widgetName?.let {
+            try {
+              classes.getString(it)
+            } catch (e: Exception) {
+              e.printStackTrace()
+              // If the widget isn't found in the mapping, use the original widget name
+              fullTag
+            }
+          }
           if (convertedXml != null) {
             convertedXml = convertedXml.replace("<$fullTag", "<$widgetClass")
           }

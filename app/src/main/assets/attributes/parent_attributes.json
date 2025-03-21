@@ -359,7 +359,7 @@
     },
     {
       "name": "app:layout_constraintBaseline_toBaselineOf",
-      "methodName": "setBottomToTop",
+      "methodName": "setBaselineToBaseline",
       "className": "layouts.ConstraintLayoutCaller",
       "attributeName": "app:layout_constraintBaseline_toBaselineOf",
       "argumentType": "view",
