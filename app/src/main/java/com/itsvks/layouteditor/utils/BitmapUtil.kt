@@ -128,26 +128,24 @@ object BitmapUtil {
    * @param foreground the foreground bitmap
    * @return the merged bitmap
    */
-  fun mergeBitmaps(background: Bitmap, foreground: Bitmap): Bitmap? {
+  fun mergeBitmaps(background: Bitmap, foreground: Bitmap): Bitmap {
     // Create a new Bitmap with the width and height of the background
     val width = background.width
     val height = background.height
-    val mergedBitmap = background.config?.let { Bitmap.createBitmap(width, height, it) }
+    val mergedBitmap = Bitmap.createBitmap(width, height, background.config)
 
     // Create a Canvas object with the new Bitmap
-    val canvas = mergedBitmap?.let {
-      Canvas(it).apply {
-        // Draw the background on the Canvas
-        drawBitmap(background, 0f, 0f, null)
+    val canvas = Canvas(mergedBitmap).apply {
+      // Draw the background on the Canvas
+      drawBitmap(background, 0f, 0f, null)
 
-        // Draw the foreground on the Canvas in the center of the background
-        drawBitmap(
-          foreground,
-          ((width - foreground.width) / 2).toFloat(),
-          ((height - foreground.height) / 2).toFloat(),
-          null
-        )
-    }
+      // Draw the foreground on the Canvas in the center of the background
+      drawBitmap(
+        foreground,
+        ((width - foreground.width) / 2).toFloat(),
+        ((height - foreground.height) / 2).toFloat(),
+        null
+      )
     }
 
     // Return the merged Bitmap
@@ -163,7 +161,7 @@ object BitmapUtil {
    */
   fun setBackgroundAccordingToImage(context: Context?, view: View, drawable: Drawable?) {
     // Check the drawable type
-    val bitmap: Bitmap? = when (drawable) {
+    val bitmap: Bitmap = when (drawable) {
       is BitmapDrawable -> {
         // Get the bitmap from the BitmapDrawable
         drawable.bitmap
@@ -187,7 +185,6 @@ object BitmapUtil {
     }
 
     // Generate a palette from the bitmap
-    bitmap?: return
     val palette = Palette.from(bitmap).generate()
 
     // Get the background color from the palette
