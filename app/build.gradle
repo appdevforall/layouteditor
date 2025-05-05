@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    // id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
     namespace "com.itsvks.layouteditor"
 
     defaultConfig {
@@ -13,20 +12,8 @@ android {
         minSdk 26
         targetSdk 34
         versionCode 8
-        versionName project.versionName
+        versionName '0.8.0-alpha'
     }
-
-    // Publish only the debug variant to consumers
-//    publishing {
-//        singleVariant("debug") {
-//            withVariantsMatching { variant -> variant.buildType == "debug" }
-//            // Add the attributes that the consumer expects:
-//            attributes {
-//                attribute("com.android.build.api.attributes.AgpVersionAttr", "8.3.0")
-//                attribute("org.jetbrains.kotlin.platform.type", "androidJvm")
-//            }
-//        }
-//    }
 
     signingConfigs {
         release {
@@ -110,6 +97,6 @@ dependencies {
     implementation(projects.layouteditor.vectormaster)
     implementation(projects.common)
 
-    // causes strict mode violation
+    //causes strict mode violation
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
 }
