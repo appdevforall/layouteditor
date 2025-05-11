@@ -1,6 +1,7 @@
 package com.itsvks.layouteditor.tools
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -53,7 +54,7 @@ class XmlLayoutParser(context: Context) {
     try {
       val factory = XmlPullParserFactory.newInstance()
       val parser = factory.newPullParser()
-      parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+      parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true)
       parser.setInput(StringReader(xml))
 
       while (parser.eventType != XmlPullParser.END_DOCUMENT) {
@@ -81,7 +82,13 @@ class XmlLayoutParser(context: Context) {
             var i = 0
             while (i < parser.attributeCount) {
               if (!parser.getAttributeName(i).startsWith("xmlns")) {
-                map.putValue(parser.getAttributeName(i), parser.getAttributeValue(i))
+                val attrName = if (parser.getAttributePrefix(i).isNotEmpty())
+                  "${parser.getAttributePrefix(i)}:${parser.getAttributeName(i)}"
+                else
+                  parser.getAttributeName(i)
+
+                Log.d("XmlParser", "Found attribute: $attrName = ${parser.getAttributeValue(i)}")
+                map.putValue(attrName, parser.getAttributeValue(i))
               }
               i++
             }
@@ -154,15 +161,21 @@ class XmlLayoutParser(context: Context) {
     for (i in keys.indices.reversed()) {
       val key = keys[i]
 
-      val attr = initializer.getAttributeFromKey(key, allAttrs) ?: return
-      val methodName = attr[Constants.KEY_METHOD_NAME].toString()
-      val className = attr[Constants.KEY_CLASS_NAME].toString()
-      val value = attributeMap.getValue(key)
-
       if (key == "android:id") {
         continue
       }
 
+      val attr = initializer.getAttributeFromKey(key, allAttrs)
+      if (attr == null) {
+        Log.w("XmlParser", "Could not find attribute $key for view ${target.javaClass.simpleName}")
+        continue
+      }
+
+      val methodName = attr[Constants.KEY_METHOD_NAME].toString()
+      val className = attr[Constants.KEY_CLASS_NAME].toString()
+      val value = attributeMap.getValue(key)
+
+      Log.d("applyAttributes", "Applying attribute $key to view $target with value $value")
       invokeMethod(methodName, className, target, value, target.context)
     }
   }

@@ -128,7 +128,16 @@ class AttributeInitializer {
     key: String, list: MutableList<HashMap<String, Any>>
   ): HashMap<String, Any>? {
     for (map in list) {
-      if (map[Constants.KEY_ATTRIBUTE_NAME] == key) return map
+      val attributeName = map[Constants.KEY_ATTRIBUTE_NAME]
+      if (attributeName != null && attributeName.toString() == key) {
+        return map
+      } else if (attributeName != null && attributeName.toString().contains(":")) {
+        val namespace = attributeName.toString().split(":")[0]
+        val attribute = attributeName.toString().split(":")[1]
+        if (attribute == key) {
+          return map
+        }
+      }
     }
     return null
   }

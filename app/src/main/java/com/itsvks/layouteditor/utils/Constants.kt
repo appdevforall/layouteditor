@@ -116,8 +116,6 @@ object Constants {
     inputTypes["textCapWords"] = InputType.TYPE_TEXT_FLAG_CAP_WORDS
     inputTypes["textEmailAddress"] = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
     inputTypes["textEmailSubject"] = InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT
-    inputTypes["textEnableTextConversionSuggestions"] =
-      InputType.TYPE_TEXT_FLAG_ENABLE_TEXT_CONVERSION_SUGGESTIONS
     inputTypes["textFilter"] =
       InputType.TYPE_TEXT_VARIATION_FILTER
     inputTypes["textImeMultiLine"] = InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE
@@ -144,6 +142,12 @@ object Constants {
       InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
     inputTypes["time"] =
       InputType.TYPE_DATETIME_VARIATION_TIME
+
+    // Add Tiramisu-specific input types conditionally
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      inputTypes["textEnableTextConversionSuggestions"] =
+        InputType.TYPE_TEXT_FLAG_ENABLE_TEXT_CONVERSION_SUGGESTIONS
+    }
 
     visibilityMap["visible"] = View.VISIBLE
     visibilityMap["invisible"] = View.INVISIBLE
