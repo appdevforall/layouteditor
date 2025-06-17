@@ -93,19 +93,11 @@ class EditorActivity : BaseActivity() {
             ) {
                 drawerLayout.closeDrawers()
             } else {
-//        val result = XmlLayoutGenerator().generate(binding.editorLayout, true)
-//        if (result.isNotEmpty()) {
-//          MaterialAlertDialogBuilder(this@EditorActivity)
-//            .setTitle(string.title_save_layout)
-//            .setMessage(string.msg_save_layout)
-//            .setPositiveButton(string.yes) { _, _ ->
-//              saveXml()
-//              finishAfterTransition()
-//            }
-//            .setNegativeButton(string.no) { _, _ -> finishAfterTransition() }
-//            .show()
-//        } else {
-                finishAfterTransition()
+                if (binding.editorLayout.isLayoutModified()) {
+                    showSaveChangesDialog()
+                } else {
+                    finishAfterTransition()
+                }
             }
         }
     }
@@ -426,6 +418,7 @@ class EditorActivity : BaseActivity() {
                 val result = XmlLayoutGenerator().generate(binding.editorLayout, true)
 
                 if (FileUtil.saveFile(this@EditorActivity, uri, result)) {
+                    binding.editorLayout.markAsSaved()
                     make(binding.root, "Success!").setSlideAnimation().showAsSuccess()
                 } else {
                     make(binding.root, "Failed to save!")
@@ -488,6 +481,7 @@ class EditorActivity : BaseActivity() {
                         val result = XmlLayoutGenerator().generate(binding.editorLayout, true)
 
                         if (FileUtil.saveFile(this@EditorActivity, uri, result)) {
+                            binding.editorLayout.markAsSaved()
                             make(binding.root, "Success!").setSlideAnimation().showAsSuccess()
                         } else {
                             make(binding.root, "Failed to save!")
@@ -540,12 +534,7 @@ class EditorActivity : BaseActivity() {
         if (result.isEmpty()) {
             showNothingDialog()
         } else {
-            startActivity(
-                Intent(this, ShowXMLActivity::class.java).putExtra(
-                    ShowXMLActivity.EXTRA_KEY_XML,
-                    result
-                )
-            )
+            finish()
         }
     }
 
@@ -636,6 +625,8 @@ class EditorActivity : BaseActivity() {
         layoutFile.deleteDesignLayout()
         layoutFile.saveLayout(layoutContent)
         openLayout(layoutFile)
+        // Mark as saved since we just created and saved it
+        binding.editorLayout.markAsSaved()
     }
 
     private fun openLayout(layoutFile: LayoutFile) {
@@ -651,6 +642,8 @@ class EditorActivity : BaseActivity() {
         binding.editorLayout.post {
             binding.editorLayout.requestLayout()
             binding.editorLayout.invalidate()
+            // Mark as saved since we just loaded it
+            binding.editorLayout.markAsSaved()
         }
 
         make(binding.root, "Loaded!")
@@ -862,12 +855,33 @@ class EditorActivity : BaseActivity() {
         if (binding.editorLayout.childCount == 0) {
             project.currentLayout.saveLayout("")
             ToastUtils.showShort(getString(string.layout_saved))
+            binding.editorLayout.markAsSaved()
             return
         }
 
         val result = XmlLayoutGenerator().generate(binding.editorLayout, false)
         project.currentLayout.saveLayout(result)
+        binding.editorLayout.markAsSaved()
         ToastUtils.showShort(getString(string.layout_saved))
+    }
+
+    private fun showSaveChangesDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Save Changes")
+            .setMessage("Do you want to save changes to the layout?")
+            .setPositiveButton("Save changes and exit") { _, _ ->
+                saveXml()
+                finishAfterTransition()
+            }
+            .setNegativeButton("Discard changes and exit") { _, _ ->
+                binding.editorLayout.markAsSaved() // Reset modified flag
+                finishAfterTransition()
+            }
+            .setNeutralButton("Cancel and stay in Layout Editor") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     companion object {
