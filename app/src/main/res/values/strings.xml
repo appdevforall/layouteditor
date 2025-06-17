@@ -135,4 +135,9 @@
     <string name="save_layout_message">Do you want to export layout or image?</string>
     <string name="msg_value">Value</string>
     <string name="name">Name</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="msg_save_changes_to_layout">Do you want to save changes to the layout?</string>
+    <string name="save_changes_and_exit">Save changes and exit</string>
+    <string name="discard_changes_and_exit">Discard changes and exit</string>
+    <string name="cancel_and_stay_in_editor">Cancel and stay in Layout Editor</string>
 </resources>

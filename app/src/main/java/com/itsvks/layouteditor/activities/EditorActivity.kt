@@ -867,17 +867,17 @@ class EditorActivity : BaseActivity() {
 
     private fun showSaveChangesDialog() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Save Changes")
-            .setMessage("Do you want to save changes to the layout?")
-            .setPositiveButton("Save changes and exit") { _, _ ->
+            .setTitle(R.string.save_changes)
+            .setMessage(R.string.msg_save_changes_to_layout)
+            .setPositiveButton(R.string.save_changes_and_exit) { _, _ ->
                 saveXml()
                 finishAfterTransition()
             }
-            .setNegativeButton("Discard changes and exit") { _, _ ->
+            .setNegativeButton(R.string.discard_changes_and_exit) { _, _ ->
                 binding.editorLayout.markAsSaved() // Reset modified flag
                 finishAfterTransition()
             }
-            .setNeutralButton("Cancel and stay in Layout Editor") { dialog, _ ->
+            .setNeutralButton(R.string.cancel_and_stay_in_editor) { dialog, _ ->
                 dialog.dismiss()
             }
             .setCancelable(false)
