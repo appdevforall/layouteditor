@@ -87,15 +87,14 @@ class EditorActivity : BaseActivity() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(
-                    GravityCompat.END
-                )
-            ) {
-                drawerLayout.closeDrawers()
-            } else {
-                if (binding.editorLayout.isLayoutModified()) {
+            when {
+                drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(GravityCompat.END) -> {
+                    drawerLayout.closeDrawers()
+                }
+                binding.editorLayout.isLayoutModified() -> {
                     showSaveChangesDialog()
-                } else {
+                }
+                else -> {
                     finishAfterTransition()
                 }
             }
@@ -175,7 +174,7 @@ class EditorActivity : BaseActivity() {
                     } else {
                         Toast.makeText(
                             this@EditorActivity,
-                            "Selected file is not an Android XML layout file",
+                            getString(string.error_invalid_xml_file),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -199,24 +198,24 @@ class EditorActivity : BaseActivity() {
                         FileUtil.getLastSegmentFromPath(path),
                         xmlConverted
                     )
-                    make(binding.root, "Imported!").setFadeAnimation().showAsSuccess()
+                    make(binding.root, getString(string.success_imported)).setFadeAnimation().showAsSuccess()
                 } else {
                     createAndOpenNewDesignLayout(
                         FileUtil.getLastSegmentFromPath(path),
                         xmlConverted
                     )
-                    make(binding.root, "Imported!").setFadeAnimation().showAsSuccess()
+                    make(binding.root, getString(string.success_imported)).setFadeAnimation().showAsSuccess()
                     //make(binding.root, "Layout Already Exists!").setFadeAnimation().showAsError()
                 }
             } else {
-                make(binding.root, "Failed to import!")
+                make(binding.root, getString(string.error_failed_to_import))
                     .setSlideAnimation()
                     .showAsError()
             }
         } else {
             Toast.makeText(
                 this@EditorActivity,
-                "Selected file is not an Android XML layout file",
+                getString(string.error_invalid_xml_file),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -230,11 +229,11 @@ class EditorActivity : BaseActivity() {
 
                     if (FileUtil.saveFile(this@EditorActivity, uri, result)) make(
                         binding.root,
-                        "Success!"
+                        getString(string.success_saved)
                     ).setSlideAnimation()
                         .showAsSuccess()
                     else {
-                        make(binding.root, "Failed to save!")
+                        make(binding.root, getString(string.error_failed_to_save))
                             .setSlideAnimation()
                             .showAsError()
                         FileUtil.deleteFile(FileUtil.convertUriToFilePath(this@EditorActivity, uri))
@@ -314,7 +313,7 @@ class EditorActivity : BaseActivity() {
             binding.paletteNavigation.setOnItemSelectedListener { item: MenuItem ->
                 try {
                     adapter.submitPaletteList(projectManager.getPalette(item.itemId))
-                    binding.paletteText.text = "Palette"
+                    binding.paletteText.text = getString(string.label_palette)
                     binding.title.text = item.title
                     replaceListViewAdapter(adapter)
                     if (fab != null) {
@@ -324,17 +323,17 @@ class EditorActivity : BaseActivity() {
                                 R.drawable.folder_outline
                             )
                         )
-                        TooltipCompat.setTooltipText(fab, "Layouts")
+                        TooltipCompat.setTooltipText(fab, getString(string.tooltip_layouts))
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Failed to load palette: ${e.message}", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "${getString(string.error_failed_to_load_palette)}: ${e.message}", Toast.LENGTH_SHORT)
                         .show()
                 }
                 true
             }
             replaceListViewAdapter(adapter)
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to initialize palette: ${e.message}", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "${getString(string.error_failed_to_initialize_palette)}: ${e.message}", Toast.LENGTH_SHORT)
                 .show()
         }
 
@@ -348,9 +347,9 @@ class EditorActivity : BaseActivity() {
                     binding.paletteText.text = project.name
                     // binding.paletteNavigation.getMenu().getItem(binding.paletteNavigation.getSelectedItemId()).setChecked(false);
                     fab.setImageResource(R.drawable.plus)
-                    TooltipCompat.setTooltipText(fab, "Create new layout")
+                    TooltipCompat.setTooltipText(fab, getString(string.tooltip_create_new_layout))
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Failed to load layouts: ${e.message}", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "${getString(string.error_failed_to_load_layouts)}: ${e.message}", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -419,9 +418,9 @@ class EditorActivity : BaseActivity() {
 
                 if (FileUtil.saveFile(this@EditorActivity, uri, result)) {
                     binding.editorLayout.markAsSaved()
-                    make(binding.root, "Success!").setSlideAnimation().showAsSuccess()
+                    make(binding.root, getString(string.success_saved)).setSlideAnimation().showAsSuccess()
                 } else {
-                    make(binding.root, "Failed to save!")
+                    make(binding.root, getString(string.error_failed_to_save))
                         .setSlideAnimation()
                         .showAsError()
                     FileUtil.deleteFile(FileUtil.convertUriToFilePath(this@EditorActivity, uri))
@@ -436,7 +435,7 @@ class EditorActivity : BaseActivity() {
                         this, createBitmapFromView(binding.editorLayout), project.name
                     )
                 )
-                else make(binding.root, "Add some views...")
+                else make(binding.root, getString(string.info_add_some_views))
                     .setFadeAnimation()
                     .setType(SBUtils.Type.INFO)
                     .show()
@@ -447,7 +446,7 @@ class EditorActivity : BaseActivity() {
                 MaterialAlertDialogBuilder(this@EditorActivity)
                     .setTitle(string.note)
                     .setMessage(
-                        "*Be aware it will fail to import when you try to import the layout file with view, different from LayoutEditor view set!"
+                        getString(string.warning_import_compatibility)
                     )
                     .setCancelable(false)
                     .setNegativeButton(string.cancel) { d, _ -> d.cancel() }
@@ -471,7 +470,7 @@ class EditorActivity : BaseActivity() {
                                 this, createBitmapFromView(binding.editorLayout), project.name
                             )
                         )
-                        else make(binding.root, "Add some views...")
+                        else make(binding.root, getString(string.info_add_some_views))
                             .setFadeAnimation()
                             .setType(SBUtils.Type.INFO)
                             .show()
@@ -482,9 +481,9 @@ class EditorActivity : BaseActivity() {
 
                         if (FileUtil.saveFile(this@EditorActivity, uri, result)) {
                             binding.editorLayout.markAsSaved()
-                            make(binding.root, "Success!").setSlideAnimation().showAsSuccess()
+                            make(binding.root, getString(string.success_saved)).setSlideAnimation().showAsSuccess()
                         } else {
-                            make(binding.root, "Failed to save!")
+                            make(binding.root, getString(string.error_failed_to_save))
                                 .setSlideAnimation()
                                 .showAsError()
                             FileUtil.deleteFile(
@@ -565,19 +564,19 @@ class EditorActivity : BaseActivity() {
     }
 
     private fun showSaveMessage(success: Boolean) {
-        if (success) make(binding.root, "Saved to gallery.")
+        if (success) make(binding.root, getString(string.success_saved_to_gallery))
             .setFadeAnimation()
             .setType(SBUtils.Type.INFO)
             .show()
-        else make(binding.root, "Failed to save...")
+        else make(binding.root, getString(string.error_failed_to_save_gallery))
             .setFadeAnimation()
             .setType(SBUtils.Type.ERROR)
             .show()
     }
 
     private fun setToolbarButtonOnClickListener(binding: ActivityLayoutEditorBinding) {
-        TooltipCompat.setTooltipText(binding.viewType, "View Type")
-        TooltipCompat.setTooltipText(binding.deviceSize, "Size")
+        TooltipCompat.setTooltipText(binding.viewType, getString(string.tooltip_view_type))
+        TooltipCompat.setTooltipText(binding.deviceSize, getString(string.tooltip_size))
         binding.viewType.setOnClickListener { view ->
             val popupMenu = PopupMenu(view.context, view)
             popupMenu.inflate(R.menu.menu_view_type)
@@ -646,7 +645,7 @@ class EditorActivity : BaseActivity() {
             binding.editorLayout.markAsSaved()
         }
 
-        make(binding.root, "Loaded!")
+        make(binding.root, getString(string.success_loaded))
             .setFadeAnimation()
             .setType(SBUtils.Type.INFO)
             .show()
@@ -680,7 +679,7 @@ class EditorActivity : BaseActivity() {
         dialog.show()
 
         inputLayout.setHint(string.msg_new_layout_name)
-        editText.setText("layout_new")
+        editText.setText(getString(string.default_layout_name))
         editText.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(p1: CharSequence, p2: Int, p3: Int, p4: Int) {}
@@ -816,7 +815,7 @@ class EditorActivity : BaseActivity() {
             string.yes
         ) { _, _ ->
             if (layouts[pos].designPath == project.mainLayout.designPath) {
-                ToastUtils.showShort("You can't delete main layout.")
+                ToastUtils.showShort(getString(string.error_cannot_delete_main_layout))
                 return@setPositiveButton
             }
             FileUtil.deleteFile(layouts[pos].designPath)
