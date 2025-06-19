@@ -27,10 +27,10 @@
 
     <item
         android:id="@+id/edit_xml"
-        android:name="@string/show_xml"
+        android:name="@string/edit_xml"
         android:icon="@drawable/xml"
-        android:title="@string/show_xml"
-        app:contentDescription="@string/show_xml"
+        android:title="@string/edit_xml"
+        app:contentDescription="@string/edit_xml"
         app:showAsAction="ifRoom" />
 
     <item

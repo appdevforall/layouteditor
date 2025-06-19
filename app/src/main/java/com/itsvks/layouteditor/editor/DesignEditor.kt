@@ -84,6 +84,7 @@ class DesignEditor : LinearLayout {
     private var isBlueprint = false
     private var structureView: StructureView? = null
     private var undoRedoManager: UndoRedoManager? = null
+    private var isModified = false
     private lateinit var preferencesManager: PreferencesManager
 
 
@@ -444,7 +445,18 @@ class DesignEditor : LinearLayout {
         if (undoRedoManager == null) return
         val result = XmlLayoutGenerator().generate(this, false)
         undoRedoManager!!.addToHistory(result)
+        markAsModified()
     }
+
+    fun markAsModified() {
+        isModified = true
+    }
+
+    fun markAsSaved() {
+        isModified = false
+    }
+
+    fun isLayoutModified(): Boolean = isModified
 
     private fun rearrangeListeners(view: View) {
         val gestureDetector =
