@@ -2,7 +2,6 @@ package com.itsvks.layouteditor.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
@@ -33,8 +32,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.itsaky.androidide.utils.OrientationUtilities
-
 import com.itsvks.layouteditor.BaseActivity
 import com.itsvks.layouteditor.LayoutFile
 import com.itsvks.layouteditor.ProjectFile
@@ -63,6 +60,7 @@ import com.itsvks.layouteditor.utils.SBUtils
 import com.itsvks.layouteditor.utils.SBUtils.Companion.make
 import com.itsvks.layouteditor.utils.Utils
 import com.itsvks.layouteditor.utils.doubleArgSafeLet
+import com.itsvks.layouteditor.utils.showContactDialog
 import com.itsvks.layouteditor.views.CustomDrawerLayout
 import java.io.File
 
@@ -296,6 +294,11 @@ class EditorActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     private fun setupDrawerNavigationRail() {
         val fab = binding.paletteNavigation.headerView?.findViewById<FloatingActionButton>(R.id.fab)
+        val helpFab =
+            binding.paletteNavigation.headerView?.findViewById<FloatingActionButton>(R.id.help_fab)
+
+        // Set tooltip text for help FAB
+        TooltipCompat.setTooltipText(helpFab as View, getString(string.help_and_feedback))
 
         val paletteMenu = binding.paletteNavigation.menu
         paletteMenu.add(Menu.NONE, 0, Menu.NONE, Constants.TAB_TITLE_COMMON)
@@ -362,6 +365,10 @@ class EditorActivity : BaseActivity() {
                         .show()
                 }
             }
+        }
+
+        helpFab.setOnClickListener {
+            showContactDialog(this)
         }
         clear()
     }
