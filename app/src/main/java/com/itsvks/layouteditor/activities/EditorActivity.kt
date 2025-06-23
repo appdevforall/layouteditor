@@ -498,6 +498,15 @@ class EditorActivity : BaseActivity() {
                 return true
             }
 
+            R.id.exit_editor -> {
+                if (binding.editorLayout.isLayoutModified()) {
+                    showSaveChangesDialog()
+                } else {
+                    finishAfterTransition()
+                }
+                return true
+            }
+
             else -> return false
         }
     }

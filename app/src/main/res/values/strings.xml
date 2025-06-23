@@ -73,6 +73,7 @@
     <string name="redo">Redo</string>
     <string name="save">Save</string>
     <string name="show_structure">Show structure</string>
+    <string name="exit_editor">Exit</string>
     <string name="show_xml">Show XML</string>
     <string name="save_xml">Save XML</string>
     <string name="delete_view">Delete view</string>

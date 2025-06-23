@@ -26,6 +26,14 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/exit_editor"
+        android:name="@string/exit_editor"
+        android:icon="@drawable/close"
+        android:title="@string/exit_editor"
+        app:contentDescription="@string/exit_editor"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/edit_xml"
         android:name="@string/edit_xml"
         android:icon="@drawable/xml"
