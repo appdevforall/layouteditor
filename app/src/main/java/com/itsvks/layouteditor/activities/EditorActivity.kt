@@ -60,7 +60,6 @@ import com.itsvks.layouteditor.utils.SBUtils
 import com.itsvks.layouteditor.utils.SBUtils.Companion.make
 import com.itsvks.layouteditor.utils.Utils
 import com.itsvks.layouteditor.utils.doubleArgSafeLet
-import com.itsvks.layouteditor.utils.showContactDialog
 import com.itsvks.layouteditor.views.CustomDrawerLayout
 import java.io.File
 
@@ -293,12 +292,12 @@ class EditorActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setupDrawerNavigationRail() {
-        val fab = binding.paletteNavigation.headerView?.findViewById<FloatingActionButton>(R.id.fab)
+        val paletteFab = binding.paletteNavigation.headerView?.findViewById<FloatingActionButton>(R.id.paletteFab)
         val helpFab =
             binding.paletteNavigation.headerView?.findViewById<FloatingActionButton>(R.id.help_fab)
 
         // Set tooltip text for help FAB
-        TooltipCompat.setTooltipText(helpFab as View, getString(string.help_and_feedback))
+        TooltipCompat.setTooltipText(helpFab as View, getString(string.help))
 
         val paletteMenu = binding.paletteNavigation.menu
         paletteMenu.add(Menu.NONE, 0, Menu.NONE, Constants.TAB_TITLE_COMMON)
@@ -328,14 +327,14 @@ class EditorActivity : BaseActivity() {
                     binding.paletteText.text = "Palette"
                     binding.title.text = item.title
                     replaceListViewAdapter(adapter)
-                    if (fab != null) {
-                        fab.setImageDrawable(
+                    if (paletteFab != null) {
+                        paletteFab.setImageDrawable(
                             ContextCompat.getDrawable(
                                 this,
                                 R.drawable.folder_outline
                             )
                         )
-                        TooltipCompat.setTooltipText(fab, "Layouts")
+                        TooltipCompat.setTooltipText(paletteFab, "Layouts")
                     }
                 } catch (e: Exception) {
                     Toast.makeText(this, "Failed to load palette: ${e.message}", Toast.LENGTH_SHORT)
@@ -349,7 +348,7 @@ class EditorActivity : BaseActivity() {
                 .show()
         }
 
-        fab?.setOnClickListener {
+        paletteFab?.setOnClickListener {
             if (binding.listView.adapter is LayoutListAdapter) {
                 createLayout()
             } else {
@@ -358,8 +357,8 @@ class EditorActivity : BaseActivity() {
                     binding.title.text = getString(string.layouts)
                     binding.paletteText.text = project.name
                     // binding.paletteNavigation.getMenu().getItem(binding.paletteNavigation.getSelectedItemId()).setChecked(false);
-                    fab.setImageResource(R.drawable.plus)
-                    TooltipCompat.setTooltipText(fab, "Create new layout")
+                    paletteFab.setImageResource(R.drawable.plus)
+                    TooltipCompat.setTooltipText(paletteFab, "Create new layout")
                 } catch (e: Exception) {
                     Toast.makeText(this, "Failed to load layouts: ${e.message}", Toast.LENGTH_SHORT)
                         .show()
@@ -368,7 +367,8 @@ class EditorActivity : BaseActivity() {
         }
 
         helpFab.setOnClickListener {
-            showContactDialog(this)
+            Toast.makeText(this, "Go to Help", Toast.LENGTH_SHORT).show()
+            // TODO - Load help page in [HelpActivity]
         }
         clear()
     }

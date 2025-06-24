@@ -133,6 +133,4 @@
     <string name="title_save_layout">Save layout</string>
     <string name="msg_save_layout">Do you want to save the layout?</string>
     <string name="save_layout_message">Do you want to export layout or image?</string>
-    <string name="go_to_help">Go to Help</string>
-    <string name="help_and_feedback">Help and Feedback</string>
 </resources>
