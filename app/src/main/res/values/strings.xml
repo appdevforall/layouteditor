@@ -73,6 +73,7 @@
     <string name="redo">Redo</string>
     <string name="save">Save</string>
     <string name="show_structure">Show structure</string>
+    <string name="exit_editor">Exit</string>
     <string name="show_xml">Show XML</string>
     <string name="save_xml">Save XML</string>
     <string name="delete_view">Delete view</string>
@@ -133,4 +134,33 @@
     <string name="title_save_layout">Save layout</string>
     <string name="msg_save_layout">Do you want to save the layout?</string>
     <string name="save_layout_message">Do you want to export layout or image?</string>
+    <string name="msg_value">Value</string>
+    <string name="name">Name</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="msg_save_changes_to_layout">Do you want to save changes to the layout?</string>
+    <string name="save_changes_and_exit">Save changes and exit</string>
+    <string name="discard_changes_and_exit">Discard changes and exit</string>
+    <string name="cancel_and_stay_in_editor">Cancel and stay in Layout Editor</string>
+    
+    <!-- EditorActivity strings -->
+    <string name="error_invalid_xml_file">Selected file is not an Android XML layout file</string>
+    <string name="error_failed_to_load_palette">Failed to load palette</string>
+    <string name="error_failed_to_initialize_palette">Failed to initialize palette</string>
+    <string name="error_failed_to_load_layouts">Failed to load layouts</string>
+    <string name="error_cannot_delete_main_layout">You can\'t delete main layout.</string>
+    <string name="success_imported">Imported!</string>
+    <string name="error_failed_to_import">Failed to import!</string>
+    <string name="success_saved">Success!</string>
+    <string name="error_failed_to_save">Failed to save!</string>
+    <string name="info_add_some_views">Add some views…</string>
+    <string name="success_saved_to_gallery">Saved to gallery.</string>
+    <string name="error_failed_to_save_gallery">Failed to save…</string>
+    <string name="success_loaded">Loaded!</string>
+    <string name="label_palette">Palette</string>
+    <string name="tooltip_layouts">Layouts</string>
+    <string name="tooltip_create_new_layout">Create new layout</string>
+    <string name="tooltip_view_type">View Type</string>
+    <string name="tooltip_size">Size</string>
+    <string name="warning_import_compatibility">*Be aware it will fail to import when you try to import the layout file with view, different from LayoutEditor view set!</string>
+    <string name="default_layout_name">layout_new</string>
 </resources>
