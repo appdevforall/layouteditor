@@ -31,6 +31,7 @@ object Constants {
   const val PALETTE_LAYOUTS = "palette/layouts.json"
   const val PALETTE_CONTAINERS = "palette/containers.json"
   const val PALETTE_GOOGLE = "palette/google.json"
+  const val PALETTE_LEGACY = "palette/legacy.json"
   const val TAB_TITLE_VIEWS = "Views"
   const val TAB_TITLE_ANDROIDX = "AndroidX"
   const val TAB_TITLE_MATERIAL = "Material Design"
