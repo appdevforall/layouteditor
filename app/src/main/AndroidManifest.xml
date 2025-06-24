@@ -44,7 +44,7 @@
       android:name=".activities.PreviewDrawableActivity"
       android:exported="true"
       android:parentActivityName=".activities.ResourceManagerActivity" />
-
+    <activity android:name=".activities.HelpActivity"/>
   </application>
 
 </manifest>
