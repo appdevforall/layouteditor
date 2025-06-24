@@ -310,8 +310,6 @@ class EditorActivity : BaseActivity() {
             .setIcon(R.mipmap.ic_palette_relative_layout)
         paletteMenu.add(Menu.NONE, 5, Menu.NONE, Constants.TAB_TITLE_CONTAINERS)
             .setIcon(R.mipmap.ic_palette_view_pager)
-        paletteMenu.add(Menu.NONE, 6, Menu.NONE, Constants.TAB_TITLE_LEGACY)
-            .setIcon(R.mipmap.ic_palette_grid_layout)
 
         binding.listView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
