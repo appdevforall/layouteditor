@@ -74,7 +74,7 @@
         }
     },
     {
-        "name": "GridLayout",
+        "name": "GridLayout (old, use ConstraintLayout instead)",
         "className": "com.itsvks.layouteditor.editor.palette.legacy.GridLayoutDesign",
         "iconName": "ic_palette_grid_layout",
         "defaultAttributes": {

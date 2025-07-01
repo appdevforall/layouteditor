@@ -127,7 +127,7 @@
         }
     },
     {
-        "name": "ListView",
+        "name": "ListView (old, use RecyclerView instead)",
         "className": "com.itsvks.layouteditor.editor.palette.legacy.ListViewDesign",
         "iconName": "ic_palette_list_view",
         "defaultAttributes": {
@@ -136,7 +136,7 @@
         }
     },
     {
-        "name": "TabHost",
+        "name": "TabHost (old, use TabLayout + ViewPager2 instead)",
         "className": "com.itsvks.layouteditor.editor.palette.legacy.TabHostDesign",
         "iconName": "ic_palette_tab_host",
         "defaultAttributes": {
@@ -144,7 +144,7 @@
         }
     },
     {
-        "name": "GridView",
+        "name": "GridView (old, use RecyclerView + GridLayoutManager instead)",
         "className": "com.itsvks.layouteditor.editor.palette.legacy.GridViewDesign",
         "iconName": "ic_palette_grid_view",
         "defaultAttributes": {
