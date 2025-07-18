@@ -133,18 +133,6 @@ class ProjectFile : Parcelable {
       preferencesManager.prefs.edit().putString(Constants.CURRENT_LAYOUT, value.path).apply()
     }
 
-  var currentLayoutDesign: LayoutFile
-    get() {
-      val currentLayoutDesignPath = preferencesManager.prefs.getString(
-        Constants.CURRENT_LAYOUT_DESIGN, "")
-      val currentLayoutPath = preferencesManager.prefs.getString(Constants.CURRENT_LAYOUT, "")
-      return LayoutFile(currentLayoutPath, currentLayoutDesignPath)
-    }
-    set(value) {
-      preferencesManager.prefs.edit().putString(Constants.CURRENT_LAYOUT_DESIGN, value.designPath)
-        .apply()
-    }
-
   fun createDefaultLayout() {
     FileUtil.writeFile(layoutPath + "layout_main.xml", "")
   }
