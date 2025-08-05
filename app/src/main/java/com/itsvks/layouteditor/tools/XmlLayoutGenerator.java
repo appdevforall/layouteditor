@@ -18,6 +18,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class XmlLayoutGenerator {
   final StringBuilder builder = new StringBuilder();
@@ -47,10 +48,13 @@ public class XmlLayoutGenerator {
 
         """);
 
-    return peek(editor.getChildAt(0), editor.getViewAttributeMap(), 0);
+    XmlLayoutParser parser = editor.getParser();
+    Map<String, String> namespaces = (parser != null) ? parser.getNamespaceDeclarations() : new HashMap<>();
+
+    return peek(editor.getChildAt(0), editor.getViewAttributeMap(), namespaces, 0);
   }
 
-  private String peek(View view, HashMap<View, AttributeMap> attributeMap, int depth) {
+  private String peek(View view, HashMap<View, AttributeMap> attributeMap, Map<String, String> namespaces, int depth) {
     if (attributeMap == null || view == null) return "";
     String indent = getIndent(depth);
     int nextDepth = depth;
@@ -58,14 +62,20 @@ public class XmlLayoutGenerator {
     String className = getClassName(view, indent);
 
     if (depth == 0) {
-      builder.append(TAB).append("xmlns:android=\"http://schemas.android.com/apk/res/android\"\n");
-      builder.append(TAB).append("xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n");
+      if (namespaces != null && !namespaces.isEmpty()) {
+        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+          builder.append(TAB)
+                  .append("xmlns:")
+                  .append(entry.getKey())
+                  .append("=\"")
+                  .append(entry.getValue())
+                  .append("\"\n");
+        }
+      }
     }
 
     List<String> keys =
-      (attributeMap.get(view) != null) ? attributeMap.get(view).keySet() : new ArrayList<>();
-    List<String> values =
-      (attributeMap.get(view) != null) ? attributeMap.get(view).values() : new ArrayList<>();
+            (attributeMap.get(view) != null) ? attributeMap.get(view).keySet() : new ArrayList<>();
     for (String key : keys) {
       // If the value contains special characters it will be converted
       builder.append(TAB).append(indent).append(key).append("=\"").append(StringEscapeUtils.escapeXml11(attributeMap.get(view).getValue(key))).append("\"\n");
@@ -86,7 +96,7 @@ public class XmlLayoutGenerator {
           builder.append(">\n\n");
 
           for (int i = 0; i < group.getChildCount(); i++) {
-            peek(group.getChildAt(i), attributeMap, nextDepth);
+            peek(group.getChildAt(i), attributeMap, namespaces, nextDepth);
           }
 
           builder.append(indent).append("</").append(className).append(">\n\n");

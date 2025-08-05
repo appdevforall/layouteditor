@@ -24,6 +24,7 @@ import java.io.StringReader
 class XmlLayoutParser(context: Context) {
 
     val viewAttributeMap: HashMap<View, AttributeMap> = HashMap()
+    val namespaceDeclarations: MutableMap<String, String> = mutableMapOf()
 
     private val initializer: AttributeInitializer
     private val listViews: MutableList<View> = ArrayList()
@@ -45,9 +46,9 @@ class XmlLayoutParser(context: Context) {
         initializer = AttributeInitializer(context, attributes, parentAttributes)
     }
 
-    val root: View
+    val root: View?
         get() {
-            return listViews[0]
+            return listViews.getOrNull(0)
         }
 
     fun parseFromXml(xml: String, context: Context) {
@@ -81,6 +82,15 @@ class XmlLayoutParser(context: Context) {
         while (parser.eventType != XmlPullParser.END_DOCUMENT) {
             when (parser.eventType) {
                 XmlPullParser.START_TAG -> {
+
+                    // vvvvv ADD LOGGING CODE HERE vvvvv
+                    if (parser.depth == 1) { // Log attributes only for the root element
+                        Log.d("LayoutDebug", "--- PARSING ROOT ELEMENT ATTRIBUTES ---")
+                        for (i in 0 until parser.attributeCount) {
+                            Log.d("LayoutDebug", "FOUND ATTRIBUTE: name='${parser.getAttributeName(i)}', value='${parser.getAttributeValue(i)}'")
+                        }
+                    }
+
                     val tagName = parser.name
 
                     // Skip NavigationView to avoid invalid parent crash
@@ -146,9 +156,18 @@ class XmlLayoutParser(context: Context) {
                     val map = AttributeMap()
 
                     for (i in 0 until parser.attributeCount) {
+                        val prefix = parser.getAttributePrefix(i)
                         val name = parser.getAttributeName(i)
-                        if (!name.startsWith("xmlns")) {
-                            map.putValue(name, parser.getAttributeValue(i))
+
+                        if ("xmlns" == prefix) {
+                            namespaceDeclarations[name] = parser.getAttributeValue(i)
+                        } else {
+                            val fullName = if (prefix != null && prefix.isNotEmpty()) {
+                                "$prefix:$name"
+                            } else {
+                                name
+                            }
+                            map.putValue(fullName, parser.getAttributeValue(i))
                         }
                     }
 
@@ -180,8 +199,8 @@ class XmlLayoutParser(context: Context) {
                 XmlPullParser.END_TAG -> {
                     val depth = parser.depth
                     if (depth >= 2 && listViews.size >= 2) {
-                        val parent = listViews[depth - 2]
-                        val child = listViews[depth - 1]
+                        val parent = listViews.getOrNull(depth - 2) ?: return
+                        val child = listViews.getOrNull(depth - 1) ?: return
                         if (parent is ViewGroup) {
                             parent.addView(child)
                             listViews.removeAt(depth - 1)

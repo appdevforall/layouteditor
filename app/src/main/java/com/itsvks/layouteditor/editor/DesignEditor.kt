@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.DragEvent
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -86,7 +87,7 @@ class DesignEditor : LinearLayout {
     private var undoRedoManager: UndoRedoManager? = null
     private var isModified = false
     private lateinit var preferencesManager: PreferencesManager
-
+    private var parser: XmlLayoutParser? = null
 
     init {
         initAttributes()
@@ -107,7 +108,9 @@ class DesignEditor : LinearLayout {
     ) {
         init(context)
     }
-
+    fun getParser(): XmlLayoutParser? {
+        return parser
+    }
     private fun init(context: Context) {
         viewType = ViewType.DESIGN
         isBlueprint = false
@@ -362,13 +365,18 @@ class DesignEditor : LinearLayout {
 
     fun loadLayoutFromParser(xml: String) {
         clearAll()
-
+        // vvvvv ADD LOGGING CODE HERE vvvvv
+        Log.d("LayoutDebug", "--- LOADING LAYOUT (THIS WILL CRASH IF MALFORMED) ---")
+        Log.d("LayoutDebug", xml)
+        // ^^^^^ END OF LOGGING CODE ^^^^^
         if (xml.isEmpty()) return
 
         val parser = XmlLayoutParser(context)
+        this.parser = parser
+
         parser.parseFromXml(xml, context)
 
-        addView(parser.root)
+        parser.root?.let {  addView(it) }
         viewAttributeMap = parser.viewAttributeMap
 
         for (view in (viewAttributeMap as HashMap<View, *>?)!!.keys) {
@@ -444,6 +452,12 @@ class DesignEditor : LinearLayout {
     fun updateUndoRedoHistory() {
         if (undoRedoManager == null) return
         val result = XmlLayoutGenerator().generate(this, false)
+
+        // vvvvv ADD LOGGING CODE HERE vvvvv
+        Log.d("LayoutDebug", "--- GENERATED XML (ABOUT TO BE SAVED) ---")
+        Log.d("LayoutDebug", result)
+        // ^^^^^ END OF LOGGING CODE ^^^^^
+
         undoRedoManager!!.addToHistory(result)
         markAsModified()
     }

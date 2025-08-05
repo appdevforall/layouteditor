@@ -20,7 +20,7 @@ class PreviewLayoutActivity : BaseActivity() {
         @Suppress("DEPRECATION") val layoutFile =
             intent.extras!!.getParcelable<LayoutFile>(Constants.EXTRA_KEY_LAYOUT)
         val parser = XmlLayoutParser(this)
-        parser.parseFromXml(layoutFile!!.readDesignFile(), this)
+        layoutFile?.readDesignFile()?.let { parser.parseFromXml(it, this) }
 
         val previewContainer = binding.root.findViewById<ViewGroup>(R.id.preview_container)
 
@@ -29,6 +29,6 @@ class PreviewLayoutActivity : BaseActivity() {
             LayoutParams.MATCH_PARENT
         )
 
-        previewContainer.addView(parser.root, layoutParams)
+        parser.root?.let{previewContainer.addView(it, layoutParams)}
     }
 }
