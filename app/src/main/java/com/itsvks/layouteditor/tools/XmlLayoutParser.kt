@@ -23,7 +23,6 @@ import java.io.StringReader
 
 class XmlLayoutParser(context: Context) {
 
-    // IMPORTANT: We no longer need a separate namespaceDeclarations map.
     val viewAttributeMap: HashMap<View, AttributeMap> = HashMap()
 
     private val initializer: AttributeInitializer
@@ -55,7 +54,6 @@ class XmlLayoutParser(context: Context) {
         try {
             val factory = XmlPullParserFactory.newInstance()
             val parser = factory.newPullParser()
-            // We turn this OFF. We will handle prefixes manually, which is more reliable.
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             parser.setInput(StringReader(xml))
             parseFromXml(parser, context)
@@ -130,25 +128,23 @@ class XmlLayoutParser(context: Context) {
 
                         else -> {
                             val result = createView(tagName, context)
-                            if (result is Exception) {
-                                throw result
-                            } else {
+                            if (result is Exception) throw result
+                            else {
                                 view = result as? View
                                 view?.let { listViews.add(it) }
                             }
                         }
                     }
 
-                    // --- SIMPLIFIED AND CORRECTED ATTRIBUTE PARSING ---
                     val map = AttributeMap()
                     for (i in 0 until parser.attributeCount) {
-                        // With namespaces off, getAttributeName() returns the full prefixed name.
                         val fullName = parser.getAttributeName(i)
                         val value = parser.getAttributeValue(i)
                         map.putValue(fullName, value)
                     }
                     view?.let { viewAttributeMap[it] = map }
                 }
+
                 XmlPullParser.END_TAG -> {
                     val depth = parser.depth
                     if (depth >= 2 && listViews.size >= 2) {
