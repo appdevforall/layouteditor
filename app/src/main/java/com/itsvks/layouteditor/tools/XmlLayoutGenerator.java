@@ -89,7 +89,6 @@ public class XmlLayoutGenerator {
           builder.append(">\n\n");
 
           for (int i = 0; i < group.getChildCount(); i++) {
-            // CHANGED: The recursive call is also simplified.
             peek(group.getChildAt(i), attributeMap, nextDepth);
           }
 
