@@ -153,22 +153,34 @@ class XmlLayoutParser(context: Context) {
                         }
                     }
 
-                    val map = AttributeMap()
+                    // --- 1. CORRECTLY CAPTURE NAMESPACES ---
+                    // We get the namespaces declared specifically on this tag.
+                    val currentDepth = parser.depth
+                    val prevDepthCount = if (currentDepth > 1) parser.getNamespaceCount(currentDepth - 1) else 0
+                    val currentDepthCount = parser.getNamespaceCount(currentDepth)
 
+                    for (i in prevDepthCount until currentDepthCount) {
+                        val prefix = parser.getNamespacePrefix(i)
+                        val uri = parser.getNamespaceUri(i)
+                        // We only need to store declarations that have a prefix (e.g., android, app, tools).
+                        if (prefix != null) {
+                            namespaceDeclarations[prefix] = uri
+                        }
+                    }
+
+                    // --- 2. PARSE REGULAR ATTRIBUTES ---
+                    // This loop now only processes non-namespace attributes.
+                    val map = AttributeMap()
                     for (i in 0 until parser.attributeCount) {
                         val prefix = parser.getAttributePrefix(i)
                         val name = parser.getAttributeName(i)
 
-                        if ("xmlns" == prefix) {
-                            namespaceDeclarations[name] = parser.getAttributeValue(i)
+                        val fullName = if (prefix != null && prefix.isNotEmpty()) {
+                            "$prefix:$name"
                         } else {
-                            val fullName = if (prefix != null && prefix.isNotEmpty()) {
-                                "$prefix:$name"
-                            } else {
-                                name
-                            }
-                            map.putValue(fullName, parser.getAttributeValue(i))
+                            name
                         }
+                        map.putValue(fullName, parser.getAttributeValue(i))
                     }
 
                     view?.let { viewAttributeMap[it] = map }

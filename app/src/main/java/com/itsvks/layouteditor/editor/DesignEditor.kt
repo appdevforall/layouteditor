@@ -365,10 +365,6 @@ class DesignEditor : LinearLayout {
 
     fun loadLayoutFromParser(xml: String) {
         clearAll()
-        // vvvvv ADD LOGGING CODE HERE vvvvv
-        Log.d("LayoutDebug", "--- LOADING LAYOUT (THIS WILL CRASH IF MALFORMED) ---")
-        Log.d("LayoutDebug", xml)
-        // ^^^^^ END OF LOGGING CODE ^^^^^
         if (xml.isEmpty()) return
 
         val parser = XmlLayoutParser(context)
@@ -432,7 +428,7 @@ class DesignEditor : LinearLayout {
 
     private fun clearAll() {
         removeAllViews()
-        structureView!!.clear()
+        structureView?.clear()
         viewAttributeMap.clear()
     }
 
@@ -445,18 +441,13 @@ class DesignEditor : LinearLayout {
     }
 
     private fun updateStructure() {
-        if (childCount == 0) structureView!!.clear()
-        else structureView!!.setView(getChildAt(0))
+        if (childCount == 0) structureView?.clear()
+        else structureView?.setView(getChildAt(0))
     }
 
     fun updateUndoRedoHistory() {
         if (undoRedoManager == null) return
         val result = XmlLayoutGenerator().generate(this, false)
-
-        // vvvvv ADD LOGGING CODE HERE vvvvv
-        Log.d("LayoutDebug", "--- GENERATED XML (ABOUT TO BE SAVED) ---")
-        Log.d("LayoutDebug", result)
-        // ^^^^^ END OF LOGGING CODE ^^^^^
 
         undoRedoManager!!.addToHistory(result)
         markAsModified()

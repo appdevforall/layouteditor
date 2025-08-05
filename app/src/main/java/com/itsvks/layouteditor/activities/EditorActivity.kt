@@ -62,6 +62,7 @@ import com.itsvks.layouteditor.utils.Utils
 import com.itsvks.layouteditor.utils.doubleArgSafeLet
 import com.itsvks.layouteditor.views.CustomDrawerLayout
 import java.io.File
+import androidx.core.view.isEmpty
 
 @SuppressLint("UnsafeOptInUsageError")
 class EditorActivity : BaseActivity() {
@@ -865,7 +866,7 @@ class EditorActivity : BaseActivity() {
     }
 
     private fun saveXml() {
-        if (binding.editorLayout.childCount == 0) {
+        if (binding.editorLayout.isEmpty()) {
             project.currentLayout.saveLayout("")
             ToastUtils.showShort(getString(string.layout_saved))
             binding.editorLayout.markAsSaved()
