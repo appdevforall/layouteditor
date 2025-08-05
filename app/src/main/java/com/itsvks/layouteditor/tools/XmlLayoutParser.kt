@@ -143,6 +143,28 @@ class XmlLayoutParser(context: Context) {
                     view?.let { viewAttributeMap[it] = map }
                 }
 
+                /**
+                 * This method is responsible for:
+                 * 1) Finding ViewGroups.(that's why we are looking for end tag)
+                 * 2) Adding view to ViewGroup as a child.(viewGroup.addView)
+                 * 3) Removing the view that was added to it's parent from the list. As it is now stored in the parent,
+                 * and we do not need it in the list anymore.
+                 * END_TAG event is triggered when we reach the end of each ViewGroup. Top to bottom. Root ViewGroup is
+                 * triggered last.
+                 *
+                 * * Min XML depth for this scenario is 2. File = 0 -> ViewGroup = 1 -> View = 2
+                 *
+                 * Therefore we are not interested in anything with depth < 2.
+                 *
+                 * Let's assume depth is 3. File -> LinearLayout -> ConstraintLayout -> View
+                 * depth - 2 = 1. This will bring us to the correct parent.
+                 * depth - 1 = 1. This will bring us to correct child.
+                 *
+                 * After adding View to ConstraintLayout, View is removed from the listViews and is considered finished.
+                 * This process will repeat until all Views and ViewGroups will be added to corresponding parents and list
+                 * view will become empty.
+                 */
+
                 XmlPullParser.END_TAG -> {
                     val depth = parser.depth
                     if (depth >= 2 && listViews.size >= 2) {
