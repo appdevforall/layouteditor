@@ -53,21 +53,6 @@ public class XmlLayoutGenerator {
 
     String className = getClassName(view, indent);
 
-    /*
-    if (depth == 0) {
-      if (namespaces != null && !namespaces.isEmpty()) {
-        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
-          builder.append(TAB)
-                  .append("xmlns:")
-                  .append(entry.getKey())
-                  .append("=\"")
-                  .append(entry.getValue())
-                  .append("\"\n");
-        }
-      }
-    }
-    */
-
     List<String> keys =
             (attributeMap.get(view) != null) ? attributeMap.get(view).keySet() : new ArrayList<>();
     for (String key : keys) {
