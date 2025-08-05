@@ -43,15 +43,9 @@ public class XmlLayoutGenerator {
 
         """);
 
-    // REMOVED: We no longer need the parser instance or a separate namespaces map.
-    // XmlLayoutParser parser = editor.getParser();
-    // Map<String, String> namespaces = (parser != null) ? parser.getNamespaceDeclarations() : new HashMap<>();
-
-    // CHANGED: The call to peek is now simpler.
     return peek(editor.getChildAt(0), editor.getViewAttributeMap(), 0);
   }
 
-  // CHANGED: The 'namespaces' map parameter is removed.
   private String peek(View view, HashMap<View, AttributeMap> attributeMap, int depth) {
     if (attributeMap == null || view == null) return "";
     String indent = getIndent(depth);
@@ -59,8 +53,6 @@ public class XmlLayoutGenerator {
 
     String className = getClassName(view, indent);
 
-    // REMOVED: This special block for namespaces is no longer needed.
-    // The main attribute loop will handle them automatically.
     /*
     if (depth == 0) {
       if (namespaces != null && !namespaces.isEmpty()) {
@@ -76,8 +68,6 @@ public class XmlLayoutGenerator {
     }
     */
 
-    // This loop now writes ALL attributes for the view. For the root view,
-    // this will include xmlns:android, android:layout_width, etc.
     List<String> keys =
             (attributeMap.get(view) != null) ? attributeMap.get(view).keySet() : new ArrayList<>();
     for (String key : keys) {

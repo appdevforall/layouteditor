@@ -46,7 +46,6 @@ class XmlLayoutParser(context: Context) {
         get() = listViews.getOrNull(0)
 
     fun parseFromXml(xml: String, context: Context) {
-        // Clear previous state for a fresh parse
         listViews.clear()
         viewAttributeMap.clear()
         clear()
@@ -63,7 +62,6 @@ class XmlLayoutParser(context: Context) {
             e.printStackTrace()
         }
 
-        // Apply attributes after the entire view hierarchy is built
         for ((view, map) in viewAttributeMap) {
             if (map.contains("android:id")) {
                 addNewId(view, map.getValue("android:id"))
