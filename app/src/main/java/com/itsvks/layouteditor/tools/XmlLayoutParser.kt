@@ -23,8 +23,8 @@ import java.io.StringReader
 
 class XmlLayoutParser(context: Context) {
 
+    // IMPORTANT: We no longer need a separate namespaceDeclarations map.
     val viewAttributeMap: HashMap<View, AttributeMap> = HashMap()
-    val namespaceDeclarations: MutableMap<String, String> = mutableMapOf()
 
     private val initializer: AttributeInitializer
     private val listViews: MutableList<View> = ArrayList()
@@ -33,64 +33,51 @@ class XmlLayoutParser(context: Context) {
         val attributes = Gson()
             .fromJson<HashMap<String, List<HashMap<String, Any>>>>(
                 FileUtil.readFromAsset(Constants.ATTRIBUTES_FILE, context),
-                object : TypeToken<HashMap<String, List<HashMap<String, Any>>>>() {
-                }.type
+                object : TypeToken<HashMap<String, List<HashMap<String, Any>>>>() {}.type
             )
         val parentAttributes = Gson()
             .fromJson<HashMap<String, List<HashMap<String, Any>>>>(
                 FileUtil.readFromAsset(Constants.PARENT_ATTRIBUTES_FILE, context),
-                object : TypeToken<HashMap<String, List<HashMap<String, Any>>>>() {
-                }.type
+                object : TypeToken<HashMap<String, List<HashMap<String, Any>>>>() {}.type
             )
-
         initializer = AttributeInitializer(context, attributes, parentAttributes)
     }
 
     val root: View?
-        get() {
-            return listViews.getOrNull(0)
-        }
+        get() = listViews.getOrNull(0)
 
     fun parseFromXml(xml: String, context: Context) {
+        // Clear previous state for a fresh parse
+        listViews.clear()
+        viewAttributeMap.clear()
+        clear()
+
         try {
             val factory = XmlPullParserFactory.newInstance()
             val parser = factory.newPullParser()
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true)
+            // We turn this OFF. We will handle prefixes manually, which is more reliable.
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             parser.setInput(StringReader(xml))
-
             parseFromXml(parser, context)
-
         } catch (e: XmlPullParserException) {
             e.printStackTrace()
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
-        clear()
-
-        for (view in viewAttributeMap.keys) {
-            val map = viewAttributeMap[view]!!
-            if ("android:id" in map.keySet()) {
+        // Apply attributes after the entire view hierarchy is built
+        for ((view, map) in viewAttributeMap) {
+            if (map.contains("android:id")) {
                 addNewId(view, map.getValue("android:id"))
             }
             applyAttributes(view, map)
         }
-
     }
 
     private fun parseFromXml(parser: XmlPullParser, context: Context) {
         while (parser.eventType != XmlPullParser.END_DOCUMENT) {
             when (parser.eventType) {
                 XmlPullParser.START_TAG -> {
-
-                    // vvvvv ADD LOGGING CODE HERE vvvvv
-                    if (parser.depth == 1) { // Log attributes only for the root element
-                        Log.d("LayoutDebug", "--- PARSING ROOT ELEMENT ATTRIBUTES ---")
-                        for (i in 0 until parser.attributeCount) {
-                            Log.d("LayoutDebug", "FOUND ATTRIBUTE: name='${parser.getAttributeName(i)}', value='${parser.getAttributeValue(i)}'")
-                        }
-                    }
-
                     val tagName = parser.name
 
                     // Skip NavigationView to avoid invalid parent crash
@@ -104,7 +91,6 @@ class XmlLayoutParser(context: Context) {
                     }
 
                     var view: View? = null
-
                     when (tagName) {
                         "fragment" -> {
                             view = FrameLayout(context).apply {
@@ -153,61 +139,16 @@ class XmlLayoutParser(context: Context) {
                         }
                     }
 
-                    // --- 1. CORRECTLY CAPTURE NAMESPACES ---
-                    // We get the namespaces declared specifically on this tag.
-                    val currentDepth = parser.depth
-                    val prevDepthCount = if (currentDepth > 1) parser.getNamespaceCount(currentDepth - 1) else 0
-                    val currentDepthCount = parser.getNamespaceCount(currentDepth)
-
-                    for (i in prevDepthCount until currentDepthCount) {
-                        val prefix = parser.getNamespacePrefix(i)
-                        val uri = parser.getNamespaceUri(i)
-                        // We only need to store declarations that have a prefix (e.g., android, app, tools).
-                        if (prefix != null) {
-                            namespaceDeclarations[prefix] = uri
-                        }
-                    }
-
-                    // --- 2. PARSE REGULAR ATTRIBUTES ---
-                    // This loop now only processes non-namespace attributes.
+                    // --- SIMPLIFIED AND CORRECTED ATTRIBUTE PARSING ---
                     val map = AttributeMap()
                     for (i in 0 until parser.attributeCount) {
-                        val prefix = parser.getAttributePrefix(i)
-                        val name = parser.getAttributeName(i)
-
-                        val fullName = if (prefix != null && prefix.isNotEmpty()) {
-                            "$prefix:$name"
-                        } else {
-                            name
-                        }
-                        map.putValue(fullName, parser.getAttributeValue(i))
+                        // With namespaces off, getAttributeName() returns the full prefixed name.
+                        val fullName = parser.getAttributeName(i)
+                        val value = parser.getAttributeValue(i)
+                        map.putValue(fullName, value)
                     }
-
                     view?.let { viewAttributeMap[it] = map }
                 }
-
-                /**
-                 * This method is responsible for:
-                 * 1) Finding ViewGroups.(that's why we are looking for end tag)
-                 * 2) Adding view to ViewGroup as a child.(viewGroup.addView)
-                 * 3) Removing the view that was added to it's parent from the list. As it is now stored in the parent,
-                 * and we do not need it in the list anymore.
-                 * END_TAG event is triggered when we reach the end of each ViewGroup. Top to bottom. Root ViewGroup is
-                 * triggered last.
-                 *
-                 * * Min XML depth for this scenario is 2. File = 0 -> ViewGroup = 1 -> View = 2
-                 *
-                 * Therefore we are not interested in anything with depth < 2.
-                 *
-                 * Let's assume depth is 3. File -> LinearLayout -> ConstraintLayout -> View
-                 * depth - 2 = 1. This will bring us to the correct parent.
-                 * depth - 1 = 1. This will bring us to correct child.
-                 *
-                 * After adding View to ConstraintLayout, View is removed from the listViews and is considered finished.
-                 * This process will repeat until all Views and ViewGroups will be added to corresponding parents and list
-                 * view will become empty.
-                 */
-
                 XmlPullParser.END_TAG -> {
                     val depth = parser.depth
                     if (depth >= 2 && listViews.size >= 2) {
