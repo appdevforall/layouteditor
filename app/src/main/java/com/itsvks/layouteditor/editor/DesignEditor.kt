@@ -554,9 +554,6 @@ class DesignEditor : LinearLayout {
         val allKeysAndValues = viewAttributeMap[target] ?: return
         val allAttrs = initializer.getAllAttributesForView(target)
 
-        // --- START: NEW, MORE ROBUST FILTERING LOGIC ---
-
-        // Create three new lists that will be guaranteed to be in sync.
         val displayKeys: MutableList<String> = ArrayList()
         val displayValues: MutableList<String> = ArrayList()
         val displayAttrs: MutableList<HashMap<String, Any>> = ArrayList()
@@ -564,23 +561,17 @@ class DesignEditor : LinearLayout {
         val originalKeys = allKeysAndValues.keySet()
         val originalValues = allKeysAndValues.values()
 
-        // Iterate through all the attributes that are currently on the view.
         for (i in originalKeys.indices) {
             val key = originalKeys[i]
 
-            // Find a matching definition for the key in our list of all possible attributes.
             val foundAttrDef = allAttrs.find { it[Constants.KEY_ATTRIBUTE_NAME].toString() == key }
 
-            // ONLY if a definition is found, add the key, its value, and its definition
-            // to our display lists. This automatically filters out any key without a
-            // definition, such as "xmlns:..." and "tools:...".
             if (foundAttrDef != null) {
                 displayKeys.add(key)
                 displayValues.add(originalValues[i])
                 displayAttrs.add(foundAttrDef)
             }
         }
-        // --- END: NEW FILTERING LOGIC ---
 
         val dialog = BottomSheetDialog(context)
         val binding = ShowAttributesDialogBinding.inflate(dialog.layoutInflater)
