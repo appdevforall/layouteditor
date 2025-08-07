@@ -627,38 +627,35 @@ class DesignEditor : LinearLayout {
             names.add(attr["name"].toString())
         }
 
-        MaterialAlertDialogBuilder(context)
-            .setTitle("Available attributes")
-            .setAdapter(
-                ArrayAdapter(context, android.R.layout.simple_list_item_1, names)
-            ) { _, w ->
-                /*
-                          if (getChildAt(0) instanceof ConstraintLayout) {
-                            final List<String> keys = VIEW_ATTRIBUTE_MAP.get(target).keySet();
-
-                            final List<HashMap<String, Object>> attrs = new ArrayList<>();
-                            final List<HashMap<String, Object>> allAttrs =
-                                INITIALIZER.getAllAttributesForView(target);
-
-                            for (String key : keys) {
-                              for (HashMap<String, Object> map : allAttrs) {
-                                if (map.get(Constants.KEY_ATTRIBUTE_NAME).toString().equals(key)) {
-                                  attrs.add(map);
-                                  break;
-                                }
-                              }
-                            }
-
-                            for(HashMap<String, Object> attr : attrs) {
-
-                            }
-                          }
-                    */
-                showAttributeEdit(
-                    target, availableAttrs[w][Constants.KEY_ATTRIBUTE_NAME].toString()
-                )
+        val dialog = BottomSheetDialog(context)
+        val binding = com.itsvks.layouteditor.databinding.DialogAvailableAttributesBinding.inflate(dialog.layoutInflater)
+        
+        dialog.setContentView(binding.root)
+        
+        val adapter = com.itsvks.layouteditor.adapters.AvailableAttributesAdapter(names) { attributeName ->
+            // Find the attribute by name
+            for (attr in availableAttrs) {
+                if (attr["name"].toString() == attributeName) {
+                    showAttributeEdit(target, attr[Constants.KEY_ATTRIBUTE_NAME].toString())
+                    break
+                }
             }
-            .show()
+            dialog.dismiss()
+        }
+        
+        binding.attributesList.adapter = adapter
+        binding.attributesList.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        
+        // Set up search functionality
+        binding.searchEditText.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                adapter.filter(s?.toString() ?: "")
+            }
+        })
+        
+        dialog.show()
     }
 
     private fun showAttributeEdit(target: View, attributeKey: String) {

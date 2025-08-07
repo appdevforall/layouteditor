@@ -7,13 +7,13 @@
   app:cardCornerRadius="6dp"
   app:cardElevation="0dp"
   app:cardBackgroundColor="?attr/colorSurface"
-  android:layout_margin="4dp">
+  android:layout_margin="2dp">
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/selectableItemBackground"
-    android:padding="15dp">
+    android:padding="10dp">
 
     <TextView
       android:id="@+id/attribute_name"

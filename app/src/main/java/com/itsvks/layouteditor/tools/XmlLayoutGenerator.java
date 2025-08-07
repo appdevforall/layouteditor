@@ -32,20 +32,6 @@ public class XmlLayoutGenerator {
       return "";
     }
     builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-    builder.append(
-      """
-        <!--
-        \tWelcome to LayoutEditor!
-
-        \tWe are proud to present our innovative layout generator app that
-        \tallows users to create and customize stunning layouts in no time.
-        \tWith LayoutEditor, you can easily create beautiful and custom
-        \tlayouts that are tailored to fit your unique needs.
-
-        \tThank you for using LayoutEditor and we hope you enjoy our app!
-        -->
-
-        """);
 
     return peek(editor.getChildAt(0), editor.getViewAttributeMap(), 0);
   }
@@ -83,21 +69,21 @@ public class XmlLayoutGenerator {
         nextDepth++;
 
         if (group.getChildCount() > 0) {
-          builder.append(">\n\n");
+          builder.append(">\n");
 
           for (int i = 0; i < group.getChildCount(); i++) {
             peek(group.getChildAt(i), attributeMap, nextDepth);
           }
 
-          builder.append(indent).append("</").append(className).append(">\n\n");
+          builder.append(indent).append("</").append(className).append(">\n");
         } else {
-          builder.append(" />\n\n");
+          builder.append(" />\n");
         }
       } else {
-        builder.append(" />\n\n");
+        builder.append(" />\n");
       }
     } else {
-      builder.append(" />\n\n");
+      builder.append(" />\n");
     }
 
     return builder.toString().trim();
